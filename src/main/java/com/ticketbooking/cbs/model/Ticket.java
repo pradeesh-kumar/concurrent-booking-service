@@ -1,4 +1,4 @@
-package com.ticketbooking.cbs;
+package com.ticketbooking.cbs.model;
 
 public record Ticket(String id) {
 }
