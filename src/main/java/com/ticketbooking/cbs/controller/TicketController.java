@@ -17,7 +17,7 @@ public class TicketController {
     private final TicketService ticketService;
 
     @PostMapping("/book")
-    public ResponseEntity<TicketResponse> bookTicket(String name, String location) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.book(name, location));
+    public ResponseEntity<TicketResponse> bookTicket(int eventId, String name, String location, int requiredTickets) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.book(eventId, name, location, requiredTickets));
     }
 }

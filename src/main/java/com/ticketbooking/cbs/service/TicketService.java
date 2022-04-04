@@ -4,5 +4,5 @@ import com.ticketbooking.cbs.model.TicketResponse;
 
 public interface TicketService {
 
-    TicketResponse book(String name, String location);
+    TicketResponse book(int eventId, String name, String location, int requiredTickets);
 }
