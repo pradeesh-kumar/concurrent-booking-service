@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) 2022. Pradeesh Kumar
+ */
+
 package com.ticketbooking.cbs.model;
 
-public record Event(int eventId, String name, int availableTickets) {
+/**
+ * The entity class represents an event
+ */
+public record Event(int eventId, String name, int totalTickets) {
 }

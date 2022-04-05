@@ -1,5 +1,12 @@
+/*
+ * Copyright (c) 2022. Pradeesh Kumar
+ */
+
 package com.ticketbooking.cbs.model;
 
+/**
+ * The represents the outcome of the ticket {@link Ticket} reservation for an event {@link Event}.
+ */
 public record TicketResponse(Ticket ticket, ReservationStatus status) {
 
     public static TicketResponse success(Ticket ticket) {
@@ -14,7 +21,7 @@ public record TicketResponse(Ticket ticket, ReservationStatus status) {
         return new TicketResponse(null, ReservationStatus.ERROR);
     }
 
-    enum ReservationStatus {
+    public enum ReservationStatus {
         SUCCESS, UNAVAILABLE, ERROR
     }
 }
