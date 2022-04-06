@@ -33,7 +33,8 @@ public class TicketLoaderHelper {
 
     /**
      * Performs the initial load of ticket for the specified event
-     * @param event event for which tickets have to be created
+     *
+     * @param event     event for which tickets have to be created
      * @param isPopular whether the event is popular
      * @return the number of tickets created
      */
@@ -46,16 +47,18 @@ public class TicketLoaderHelper {
     /**
      * Creates the specified number of unreserved tickets for the specified event
      *
-     * @param event the event for which tickets have to be created
+     * @param event     the event for which tickets have to be created
      * @param batchSize the number of tickets to be created
      * @return created tickets
      */
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Ticket> loadTickets(Event event, int batchSize) {
         List<Ticket> tickets = IntStream
                 .range(0, batchSize)
                 .mapToObj(i -> Ticket.create(event.getEventId())).toList();
-        return ticketRepository.saveAllAndFlush(tickets);
+        event.setCreatedTickets(event.getCreatedTickets() + batchSize);
+        eventRepository.save(event);
+        return ticketRepository.saveAll(tickets);
     }
 
     /**
@@ -73,8 +76,10 @@ public class TicketLoaderHelper {
         if (load < LOAD_FACTOR) {
             return 0;
         }
-        int batchSize = Math.min(event.getCreatedTickets() * 2, event.getTotalTickets());
+        int batchSize = Math.min(event.getCreatedTickets() * 2, event.getTotalTickets() - event.getCreatedTickets());
         loadTickets(event, batchSize);
+        event.setCreatedTickets(event.getCreatedTickets() + batchSize);
+        eventRepository.save(event);
         return batchSize;
     }
 

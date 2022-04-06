@@ -13,6 +13,7 @@ import com.ticketbooking.cbs.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class DefaultTicketService implements TicketService {
      * @return Ticket response
      */
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
     public TicketResponse book(ReservationRequest request) {
         List<Ticket> tickets = getAvailableTickets(request.eventId(), request.ticketsRequired());
         return tickets.isEmpty() ? TicketResponse.unavailable() : reserve(tickets, request.email(), request.eventId());
@@ -50,6 +51,7 @@ public class DefaultTicketService implements TicketService {
      * @param email email id to which the ticket to be registered
      * @return reserved tickets
      */
+    @Transactional(propagation = Propagation.MANDATORY)
     private TicketResponse reserve(List<Ticket> tickets, String email, int eventId) {
         tickets.forEach(ticket -> {
             ticket.setEmail(email);
@@ -67,6 +69,7 @@ public class DefaultTicketService implements TicketService {
      * @param requiredCount total tickets needed
      * @return unreserved tickets
      */
+    @Transactional(propagation = Propagation.MANDATORY)
     private List<Ticket> getAvailableTickets(int eventId, int requiredCount) {
         List<Ticket> unreservedTickets = ticketRepository.findAllUnreserved(eventId, requiredCount);
         int moreTicketsNeeded = requiredCount - unreservedTickets.size();
@@ -92,6 +95,7 @@ public class DefaultTicketService implements TicketService {
      * @param requiredTickets required number of tickets
      * @return created tickets
      */
+    @Transactional(propagation = Propagation.MANDATORY)
     private List<Ticket> loadTickets(Event event, int requiredTickets) {
         int uncreatedTickets = event.getTotalTickets() - event.getCreatedTickets();
         if (uncreatedTickets < requiredTickets) {
