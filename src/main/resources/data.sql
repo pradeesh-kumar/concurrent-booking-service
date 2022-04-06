@@ -1,4 +1,15 @@
-INSERT INTO event VALUES (1, 'Music Concert', 100);
-INSERT INTO event VALUES (2, 'Bowling Game', 1000);
-INSERT INTO event VALUES (3, 'Online Counter Strike Match', 10);
-INSERT INTO event VALUES (4, 'Cooking Competition', 1);
+INSERT INTO event VALUES (1, 'Music Concert', 1, 1);
+INSERT INTO event VALUES (2, 'Bowling Game', 10, 10);
+
+INSERT INTO ticket(event_id, reserved) VALUES(1, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+INSERT INTO ticket(event_id, reserved) VALUES(2, false);
+

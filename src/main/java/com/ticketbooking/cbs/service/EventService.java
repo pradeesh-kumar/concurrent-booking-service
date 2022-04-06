@@ -9,6 +9,9 @@ import com.ticketbooking.cbs.model.Event;
 
 import java.util.Optional;
 
+/**
+ * The service interface specifies the operations related to {@link Event}
+ */
 public interface EventService {
 
     void create(CreateEventRequest createEventRequest);

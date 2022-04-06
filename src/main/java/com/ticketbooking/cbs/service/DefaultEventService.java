@@ -6,43 +6,37 @@ package com.ticketbooking.cbs.service;
 
 import com.ticketbooking.cbs.model.CreateEventRequest;
 import com.ticketbooking.cbs.model.Event;
+import com.ticketbooking.cbs.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+/**
+ * The service class performs the ticket {@link Event} related service logics.
+ */
 @Service
 @RequiredArgsConstructor
 public class DefaultEventService implements EventService {
 
-    private static final String QUERY_INSERT = "INSERT INTO event(eventName, totalTickets) VALUES(?, ?)";
-    private static final String QUERY_GET = "SELECT * FROM event WHERE eventId = ?";
-
-    private final JdbcTemplate jdbcTemplate;
+    private final EventRepository eventRepository;
+    private final TicketLoaderHelper ticketLoaderHelper;
 
     @Override
     @Transactional
     public void create(CreateEventRequest request) {
-        Event event = request.event();
-        jdbcTemplate.update(QUERY_INSERT, event.getEventName(), event.getTotalTickets());
-        prefillTickets(event.getEventId(), request.popular());
+        Event saved = eventRepository.save(request.event());
+        int ticketsCreatedCount = ticketLoaderHelper.prefillTickets(saved, request.popular());
+        saved.setCreatedTickets(ticketsCreatedCount);
+        eventRepository.save(saved);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Optional<Event> findById(int eventId) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(QUERY_GET, new BeanPropertyRowMapper<>(Event.class), eventId));
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        return eventRepository.findById(eventId);
     }
 
-    private void prefillTickets(int eventId, boolean isPopular) {
-
-    }
 }
