@@ -4,8 +4,18 @@
 
 package com.ticketbooking.cbs.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * The entity class represents an event
  */
-public record Event(int eventId, String name, int totalTickets) {
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class Event {
+
+    private int eventId;
+    private String eventName;
+    private int totalTickets;
 }

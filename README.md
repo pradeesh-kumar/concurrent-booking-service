@@ -52,12 +52,13 @@ If it's going to be a popular one, we can follow approach 1. Otherwise, we shoul
 ## How to run?
 1. Go to the class ConcurrentBookingServiceApplication.java
 2. Run as Java application
-3. Run the curl command given below
-
-`curl --location --request POST 'http://localhost:8088/ticket/book?eventId=1&name=Alice&location=somewhere&requiredTickets=5'`
+3. Swagger UI available at: http://localhost:8088/swagger-ui/index.html
 
 To access the H2 database, go to `http://localhost:8080/h2-console`
 Set jdbc url to `jdbc:h2:mem:testdb` in the h2 console
 
 ## How to do performance test?
 Apache Jmeter project file is provided in this repo -> 'Ticket booking test.jmx'. Load it in your Apache Jmeter and perform the test.
+
+# Contributing
+If you want to contribute to this repository, please fork and raise PR. Any bug fixes, enhancements, typo corrections are welcome.

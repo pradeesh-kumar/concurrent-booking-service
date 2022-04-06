@@ -11,6 +11,6 @@ import java.util.Optional;
 
 public interface EventService {
 
-    Event create(CreateEventRequest createEventRequest);
+    void create(CreateEventRequest createEventRequest);
     Optional<Event> findById(int eventId);
 }

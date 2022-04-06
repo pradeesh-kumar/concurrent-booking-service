@@ -7,6 +7,7 @@ package com.ticketbooking.cbs.controller;
 import com.ticketbooking.cbs.model.ReservationRequest;
 import com.ticketbooking.cbs.model.TicketResponse;
 import com.ticketbooking.cbs.service.TicketService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  */
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping("/tickets")
 @RequiredArgsConstructor
+@Tag(name = "Ticket Api")
 public class TicketController {
 
     private final TicketService ticketService;
