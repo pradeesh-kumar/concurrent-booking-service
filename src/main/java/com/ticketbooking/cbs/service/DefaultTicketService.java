@@ -11,6 +11,7 @@ import com.ticketbooking.cbs.model.TicketResponse;
 import com.ticketbooking.cbs.repository.EventRepository;
 import com.ticketbooking.cbs.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,6 +26,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultTicketService implements TicketService {
 
     private final TicketRepository ticketRepository;
@@ -38,7 +40,7 @@ public class DefaultTicketService implements TicketService {
      * @return Ticket response
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, timeout = 2)
     public TicketResponse book(ReservationRequest request) {
         List<Ticket> tickets = getAvailableTickets(request.eventId(), request.ticketsRequired());
         return tickets.isEmpty() ? TicketResponse.unavailable() : reserve(tickets, request.email(), request.eventId());
@@ -51,15 +53,15 @@ public class DefaultTicketService implements TicketService {
      * @param email email id to which the ticket to be registered
      * @return reserved tickets
      */
-    @Transactional(propagation = Propagation.MANDATORY)
     private TicketResponse reserve(List<Ticket> tickets, String email, int eventId) {
         tickets.forEach(ticket -> {
             ticket.setEmail(email);
             ticket.setReserved(true);
             ticket.setReservedTs(LocalDateTime.now());
         });
-        ticketRepository.saveAllAndFlush(tickets);
+        ticketRepository.saveAll(tickets);
         ticketLoaderHelper.reloadTickets(eventId);
+        log.info("{} Ticket has been reserved to {} for an event {}", tickets.size(), email, eventId);
         return TicketResponse.success(tickets);
     }
 
@@ -69,7 +71,6 @@ public class DefaultTicketService implements TicketService {
      * @param requiredCount total tickets needed
      * @return unreserved tickets
      */
-    @Transactional(propagation = Propagation.MANDATORY)
     private List<Ticket> getAvailableTickets(int eventId, int requiredCount) {
         List<Ticket> unreservedTickets = ticketRepository.findAllUnreserved(eventId, requiredCount);
         int moreTicketsNeeded = requiredCount - unreservedTickets.size();
@@ -95,7 +96,6 @@ public class DefaultTicketService implements TicketService {
      * @param requiredTickets required number of tickets
      * @return created tickets
      */
-    @Transactional(propagation = Propagation.MANDATORY)
     private List<Ticket> loadTickets(Event event, int requiredTickets) {
         int uncreatedTickets = event.getTotalTickets() - event.getCreatedTickets();
         if (uncreatedTickets < requiredTickets) {

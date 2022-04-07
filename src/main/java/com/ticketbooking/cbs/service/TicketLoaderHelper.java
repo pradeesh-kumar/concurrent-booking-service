@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
@@ -51,7 +50,6 @@ public class TicketLoaderHelper {
      * @param batchSize the number of tickets to be created
      * @return created tickets
      */
-    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Ticket> loadTickets(Event event, int batchSize) {
         List<Ticket> tickets = IntStream
                 .range(0, batchSize)
@@ -67,9 +65,9 @@ public class TicketLoaderHelper {
      * @param eventId for which tickets have to be created
      * @return number of new tickets created
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public int reloadTickets(int eventId) {
-        Event event = findById(eventId).get();
+        Event event = eventRepository.findById(eventId).get();
         float reservedCount = ticketRepository.countByEventIdAndReserved(event.getEventId(), true);
         float unreservedCount = event.getCreatedTickets() - reservedCount;
         float load = reservedCount / unreservedCount;
@@ -78,13 +76,6 @@ public class TicketLoaderHelper {
         }
         int batchSize = Math.min(event.getCreatedTickets() * 2, event.getTotalTickets() - event.getCreatedTickets());
         loadTickets(event, batchSize);
-        event.setCreatedTickets(event.getCreatedTickets() + batchSize);
-        eventRepository.save(event);
         return batchSize;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
-    public Optional<Event> findById(int eventId) {
-        return eventRepository.findById(eventId);
     }
 }

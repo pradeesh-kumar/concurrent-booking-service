@@ -9,7 +9,6 @@ import com.ticketbooking.cbs.model.Event;
 import com.ticketbooking.cbs.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class DefaultEventService implements EventService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @Transactional(readOnly = true)
     public Optional<Event> findById(int eventId) {
         return eventRepository.findById(eventId);
     }
