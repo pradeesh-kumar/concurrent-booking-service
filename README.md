@@ -60,5 +60,5 @@ Set jdbc url to `jdbc:h2:mem:testdb` in the h2 console
 ## How to do performance test?
 Apache Jmeter project file is provided in this repo -> 'Ticket booking test.jmx'. Load it in your Apache Jmeter and perform the test.
 
-# Contributing
+## Contributing
 If you want to contribute to this repository, please fork and raise PR. Any bug fixes, enhancements, typo corrections are welcome.
