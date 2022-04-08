@@ -19,11 +19,7 @@ public record TicketResponse(List<Ticket> ticket, ReservationStatus status) {
         return new TicketResponse(null, ReservationStatus.UNAVAILABLE);
     }
 
-    public static TicketResponse error() {
-        return new TicketResponse(null, ReservationStatus.ERROR);
-    }
-
     public enum ReservationStatus {
-        SUCCESS, UNAVAILABLE, ERROR
+        SUCCESS, UNAVAILABLE
     }
 }

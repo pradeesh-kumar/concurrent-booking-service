@@ -42,6 +42,7 @@ public class DefaultTicketService implements TicketService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, timeout = 2)
     public TicketResponse book(ReservationRequest request) {
+        log.info("{} user is about to book {} tickets", request.email(), request.ticketsRequired());
         List<Ticket> tickets = getAvailableTickets(request.eventId(), request.ticketsRequired());
         return tickets.isEmpty() ? TicketResponse.unavailable() : reserve(tickets, request.email(), request.eventId());
     }
