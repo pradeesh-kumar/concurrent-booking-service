@@ -9,6 +9,7 @@ import com.ticketbooking.cbs.model.Ticket;
 import com.ticketbooking.cbs.repository.EventRepository;
 import com.ticketbooking.cbs.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,10 +20,10 @@ import java.util.stream.IntStream;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class TicketLoaderHelper {
 
     private static final int TICKET_LOAD_BATCH_SIZE = 50;
-    private static final float LOAD_FACTOR = 0.75f;
 
     private final TicketRepository ticketRepository;
     private final EventRepository eventRepository;
@@ -64,8 +65,8 @@ public class TicketLoaderHelper {
      * @return the requiredTickets number of unreserved tickets
      */
     public List<Ticket> fullfillTickets(Event event, int requiredTickets) {
-        int createdTickets = event.getCreatedTickets();
-        int batchSize = Math.min((createdTickets + requiredTickets) * 2, event.getTotalTickets());
+        int batchSize = Math.min((event.getCreatedTickets() + requiredTickets) * 2, event.getTotalTickets() - event.getCreatedTickets());
+        log.info("Total: {}, Created: {}", event.getTotalTickets(), event.getCreatedTickets());
         List<Ticket> freshlyLoaded = loadTickets(event, batchSize);
         return freshlyLoaded.stream().limit(requiredTickets).toList();
     }
