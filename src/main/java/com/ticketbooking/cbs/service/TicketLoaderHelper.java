@@ -10,9 +10,6 @@ import com.ticketbooking.cbs.repository.EventRepository;
 import com.ticketbooking.cbs.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -60,22 +57,16 @@ public class TicketLoaderHelper {
     }
 
     /**
-     * Creates unreserved tickets if the LOAD_FACTOR threshold crossed
+     * Returns the requiredTickets number of new tickets also performs the ticket reload
      *
-     * @param eventId for which tickets have to be created
-     * @return number of new tickets created
+     * @param event event pertaining to the ticket
+     * @param requiredTickets total additional tickets required
+     * @return the requiredTickets number of unreserved tickets
      */
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
-    public int reloadTickets(int eventId) {
-        Event event = eventRepository.findById(eventId).get();
-        float reservedCount = ticketRepository.countByEventIdAndReserved(event.getEventId(), true);
-        float unreservedCount = event.getCreatedTickets() - reservedCount;
-        float load = reservedCount / unreservedCount;
-        if (load < LOAD_FACTOR) {
-            return 0;
-        }
-        int batchSize = Math.min(event.getCreatedTickets() * 2, event.getTotalTickets() - event.getCreatedTickets());
-        loadTickets(event, batchSize);
-        return batchSize;
+    public List<Ticket> fullfillTickets(Event event, int requiredTickets) {
+        int createdTickets = event.getCreatedTickets();
+        int batchSize = Math.min((createdTickets + requiredTickets) * 2, event.getTotalTickets());
+        List<Ticket> freshlyLoaded = loadTickets(event, batchSize);
+        return freshlyLoaded.stream().limit(requiredTickets).toList();
     }
 }

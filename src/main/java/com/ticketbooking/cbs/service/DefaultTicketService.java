@@ -60,7 +60,6 @@ public class DefaultTicketService implements TicketService {
             ticket.setReservedTs(LocalDateTime.now());
         });
         ticketRepository.saveAll(tickets);
-        ticketLoaderHelper.reloadTickets(eventId);
         log.info("{} Ticket has been reserved to {} for an event {}", tickets.size(), email, eventId);
         return TicketResponse.success(tickets);
     }
@@ -101,6 +100,6 @@ public class DefaultTicketService implements TicketService {
         if (uncreatedTickets < requiredTickets) {
             return List.of();
         }
-        return ticketLoaderHelper.loadTickets(event, requiredTickets);
+        return ticketLoaderHelper.fullfillTickets(event, requiredTickets);
     }
 }
