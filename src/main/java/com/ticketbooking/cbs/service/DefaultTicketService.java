@@ -77,25 +77,25 @@ public class DefaultTicketService implements TicketService {
             return unreservedTickets;
         }
         List<Ticket> moreTickets = eventRepository.findById(eventId)
-                .map(event -> loadTickets(event, moreTicketsNeeded))
+                .map(event -> getAdditionalTickets(event, moreTicketsNeeded))
                 .orElse(List.of());
         if (moreTickets.isEmpty()) {
             return List.of();
         }
         List<Ticket> fulfilledTickets = new ArrayList<>();
-        fulfilledTickets.addAll(moreTickets);
         fulfilledTickets.addAll(unreservedTickets);
+        fulfilledTickets.addAll(moreTickets);
         return fulfilledTickets;
     }
 
     /**
-     * Loads the required tickets
+     * Provides the additionally required tickets
      *
      * @param event the event for which tickets have to be created
      * @param requiredTickets required number of tickets
      * @return created tickets
      */
-    private List<Ticket> loadTickets(Event event, int requiredTickets) {
+    private List<Ticket> getAdditionalTickets(Event event, int requiredTickets) {
         int uncreatedTickets = event.getTotalTickets() - event.getCreatedTickets();
         if (uncreatedTickets < requiredTickets) {
             return List.of();
