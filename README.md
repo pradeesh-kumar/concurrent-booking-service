@@ -46,8 +46,8 @@ Well! we can choose a hybrid approach. During the creation of the event, there m
 If it's going to be a popular one, we can follow approach 1. Otherwise, we should follow the 2nd approach.
 
 ## Features
-1. Book tickets
-2. Cancel the booked ticket
+1. Create Events
+2. Book tickets
 
 ## How to run?
 1. Go to the class ConcurrentBookingServiceApplication.java
