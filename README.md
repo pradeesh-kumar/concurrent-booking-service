@@ -54,7 +54,7 @@ If it's going to be a popular one, we can follow approach 1. Otherwise, we shoul
 2. Run as Java application
 3. Swagger UI available at: http://localhost:8088/swagger-ui/index.html
 
-To access the H2 database, go to `http://localhost:8080/h2-console`
+To access the H2 database, go to `http://localhost:8088/h2-console`
 Set jdbc url to `jdbc:h2:mem:testdb` in the h2 console
 
 ## How to do performance test?
